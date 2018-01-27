@@ -1,8 +1,70 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import ProtectedPage from './ProtectedPage';
-import * as Config from './config';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import Navigation from './components/Navigation';
+import LandingPage from './components/Landing';
+import SignUpPage from './components/SignUp';
+import SignInPage from './components/SignIn';
+import PasswordForgetPage from './components/PasswordForget';
+import HomePage from './components/Home';
+import AccountPage from './components/Account';
+
+import * as routes from './constants/routes';
+
+const App = () =>
+  <Router>
+    <div>
+      <Navigation />
+
+      <hr/>
+
+      <Route
+        exact path={routes.LANDING}
+        component={() => <LandingPage />}
+      />
+      <Route
+        exact path={routes.SIGN_UP}
+        component={() => <SignUpPage />}
+      />
+      <Route
+        exact path={routes.SIGN_IN}
+        component={() => <SignInPage />}
+      />
+      <Route
+        exact path={routes.PASSWORD_FORGET}
+        component={() => <PasswordForgetPage />}
+      />
+      <Route
+        exact path={routes.HOME}
+        component={() => <HomePage />}
+      />
+      <Route
+        exact path={routes.ACCOUNT}
+        component={() => <AccountPage />}
+      />
+    </div>
+  </Router>
+
+export default App;
+
+//import firebase from 'firebase';
+//import { Switch, Route, Redirect } from 'react-router-dom';
+//import ProtectedPage from './ProtectedPage';
+//import * as Config from './config';
+
+
+/*var config = {
+  apiKey: Config.API_KEY,
+  authDomain: Config.AUTH_DOMAIN,
+  databaseURL: "",
+  projectId: Config.PROJECT_ID,
+  storageBucket: "",
+};
+firebase.initializeApp(config);
+const auth = firebase.auth();
+
+export const doSignInWithPhoneNumber = (phoneNumber, appVerifier) =>
+  auth.signInWithPhoneNumber(phoneNumber, appVerifier);
 
 class App extends Component {
   constructor(props){
@@ -12,19 +74,13 @@ class App extends Component {
       verifyCode : '',
       redirectToReferrer: false
     }
-    var config = {
-      apiKey: Config.API_KEY,
-      authDomain: Config.AUTH_DOMAIN,
-      databaseURL: "",
-      projectId: Config.PROJECT_ID,
-      storageBucket: "",
-    };
-    firebase.initializeApp(config);
+    
     this.success = 0;
     
   }
 
   componentDidMount() {
+    
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(this.recaptcha, {
       'size': 'invisible',
       'callback': function (response) {
@@ -75,6 +131,27 @@ class App extends Component {
     
   var appVerifier = window.recaptchaVerifier;
   
+  doSignInWithPhoneNumber(phoneNumber1, appVerifier)
+    .then((confirmationResult) => {
+      var code = prompt('Enter the verification code you received by SMS');
+          if (code) {
+            confirmationResult.confirm(code).then(function () {
+              //window.close();
+              this.setState ({
+                redirectToReferrer : true
+              })
+            }).catch(function (error) {
+              // User couldn't sign in (bad verification code?)
+              console.error('Error while checking the verification code', error);
+              window.alert('Error while checking the verification code:\n\n'
+                  + error.code + '\n\n' + error.message)
+            });
+            
+          }
+    })
+    .catch(error => {
+      //this.setState(byPropKey('error', error));
+    });
   firebase.auth().signInWithPhoneNumber(phoneNumber1, appVerifier)
       .then(function (confirmationResult) {
         // SMS sent. Prompt user to type the code from the message, then sign the
@@ -85,8 +162,9 @@ class App extends Component {
           if (code) {
             confirmationResult.confirm(code).then(function () {
               //window.close();
-              const loginSuccess = '/login-success';
-              <Redirect to={loginSuccess}/>
+              this.setState ({
+                redirectToReferrer : true
+              })
             }).catch(function (error) {
               // User couldn't sign in (bad verification code?)
               console.error('Error while checking the verification code', error);
@@ -95,13 +173,13 @@ class App extends Component {
             });
             
           }
-      }).catch(function (error) {
+      }.bind(this)).catch(function (error) {
         // Error; SMS not sent
         // ...
-      });
+      });*/
 
       
-  }
+ /* }
 }
 
-export default App;
+export default App;*/
