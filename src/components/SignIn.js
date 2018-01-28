@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import * as firebase from 'firebase';
 
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
@@ -26,6 +27,24 @@ class SignInForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
+  componentDidMount() {
+    
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(this.recaptcha, {
+      'size': 'invisible',
+      'callback': function (response) {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        // ...
+      },
+      'expired-callback': function () {
+        // Response expired. Ask user to solve reCAPTCHA again.
+        // ...
+      }
+   });
+   window.recaptchaVerifier.render().then(function (widgetId) {
+     window.recaptchaWidgetId = widgetId;
+   });
+  }
+
   onSubmit = (event) => {
     const {
       phonenumber,
@@ -35,10 +54,24 @@ class SignInForm extends Component {
       history,
     } = this.props;
 
-    auth.doSignInWithPhoneNumber(phonenumber)
-      .then(() => {
-        this.setState(() => ({ ...INITIAL_STATE }));
-        history.push(routes.HOME);
+    var appVerifier = window.recaptchaVerifier;
+    auth.signInWithPhoneNumber(phonenumber, appVerifier)
+      .then((confirmationResult) => {
+        var code = prompt('Enter the verification code you received by SMS');
+        if (code) {
+          confirmationResult.confirm(code).then(function () {
+            //window.close();
+            this.setState(() => ({ ...INITIAL_STATE }));
+            history.push(routes.HOME);
+          }).catch(function (error) {
+            // User couldn't sign in (bad verification code?)
+            console.error('Error while checking the verification code', error);
+            window.alert('Error while checking the verification code:\n\n'
+                + error.code + '\n\n' + error.message)
+          });
+          
+        }
+        
       })
       .catch(error => {
         this.setState(byPropKey('error', error));
@@ -57,20 +90,23 @@ class SignInForm extends Component {
       phonenumber === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={phonenumber}
-          onChange={event => this.setState(byPropKey('phonenumber', event.target.value))}
-          type="text"
-          placeholder="Phonenumber"
-        />
-        
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
+        <div>
+        <div ref={(ref)=>this.recaptcha=ref}></div>
+        <form onSubmit={this.onSubmit}>
+            <input
+            value={phonenumber}
+            onChange={event => this.setState(byPropKey('phonenumber', event.target.value))}
+            type="text"
+            placeholder="Phonenumber"
+            />
+            
+            <button disabled={isInvalid} type="submit">
+            Sign In
+            </button>
 
-        { error && <p>{error.message}</p> }
-      </form>
+            { error && <p>{error.message}</p> }
+        </form>
+        </div>
     );
   }
 }
