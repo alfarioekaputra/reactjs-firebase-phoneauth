@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import withAuthorization from './withAuthorization';
+import Navigation from './Navigation';
 
 const AccountPage = (props, { authUser }) =>
   <div>
-    <h1>Account: {authUser.phoneNumber}</h1>
+        <Navigation/>
+        <h1>Account: {authUser.phoneNumber}</h1>
   </div>
 
 AccountPage.contextTypes = {

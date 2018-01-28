@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import * as firebase from 'firebase';
+import Phone from 'react-phone-number-input';
+
+import '../assets/css/login.css'
+import 'react-phone-number-input/rrui.css'
+import 'react-phone-number-input/style.css'
 
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
+import Navigation from './Navigation';
+
+/* style */
+import {Hero, Container, Title, SubTitle, Box, Input, Button} from 'reactbulma';
 
 const SignInPage = ({ history }) =>
   <div>
-    <h1>SignIn</h1>
     <SignInForm history={history} />
   </div>
 
@@ -90,17 +98,42 @@ class SignInForm extends Component {
     return (
         <div>
         <div ref={(ref)=>this.recaptcha=ref}></div>
-       
-            <input
-            value={phonenumber}
-            onChange={event => this.setState(byPropKey('phonenumber', event.target.value))}
-            type="text"
-            placeholder="Phonenumber"
-            />
+        <Hero success fullheight>
+        <Hero.Body>
+            <Container hasTextCentered>
+                <div className="column is-4 is-offset-4">
+                    <Title className="has-text-grey">
+                        Login
+                    </Title>
+                    <SubTitle className="has-text-grey">
+                        Please login to proceed.
+                    </SubTitle>
+                    <Box>
+                        <figure className="avatar">
+                            <img src="https://placehold.it/128x128" />
+                        </figure>
+                        <form>
+                            <div className="field">
+                                <div className="control">
+                                    <Phone
+                                        country="ID"
+                                        placeholder="Enter phone number"
+                                        value={ phonenumber }
+                                        onChange={event => this.setState(byPropKey('phonenumber', event.target.value))}/>
+                                </div>
+                            </div>
+                            <Button block info large disabled={isInvalid} onClick={this.onSubmit}>
+                                Sign In
+                            </Button>
+                        </form>
+                    </Box>
+                </div>
+            </Container>
+        </Hero.Body>
+        </Hero>
+
             
-            <button disabled={isInvalid} onClick={this.onSubmit}>
-            Sign In
-            </button>
+            
 
             { error && <p>{error.message}</p> }
         

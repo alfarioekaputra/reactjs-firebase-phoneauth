@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import Navigation from './components/Navigation';
 import LandingPage from './components/Landing';
 import SignUpPage from './components/SignUp';
 import SignInPage from './components/SignIn';
@@ -17,10 +16,6 @@ import { firebase } from './firebase';
 const App = () =>
   <Router>
     <div>
-      <Navigation />
-
-      <hr/>
-
       <Route exact path={routes.LANDING} component={() => <LandingPage />} />
       <Route exact path={routes.SIGN_UP} component={() => <SignUpPage />} />
       <Route exact path={routes.SIGN_IN} component={() => <SignInPage />} />
