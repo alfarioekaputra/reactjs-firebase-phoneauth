@@ -55,13 +55,11 @@ class SignInForm extends Component {
     } = this.props;
 
     var appVerifier = window.recaptchaVerifier;
-    auth.signInWithPhoneNumber(phonenumber, appVerifier)
+    auth.doSignInWithPhoneNumber(phonenumber, appVerifier)
       .then((confirmationResult) => {
         var code = prompt('Enter the verification code you received by SMS');
         if (code) {
           confirmationResult.confirm(code).then(function () {
-            //window.close();
-            this.setState(() => ({ ...INITIAL_STATE }));
             history.push(routes.HOME);
           }).catch(function (error) {
             // User couldn't sign in (bad verification code?)
@@ -92,7 +90,7 @@ class SignInForm extends Component {
     return (
         <div>
         <div ref={(ref)=>this.recaptcha=ref}></div>
-        <form onSubmit={this.onSubmit}>
+       
             <input
             value={phonenumber}
             onChange={event => this.setState(byPropKey('phonenumber', event.target.value))}
@@ -100,12 +98,12 @@ class SignInForm extends Component {
             placeholder="Phonenumber"
             />
             
-            <button disabled={isInvalid} type="submit">
+            <button disabled={isInvalid} onClick={this.onSubmit}>
             Sign In
             </button>
 
             { error && <p>{error.message}</p> }
-        </form>
+        
         </div>
     );
   }
